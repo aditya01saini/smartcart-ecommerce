@@ -14,12 +14,12 @@ export const errorMiddleware = (err, req, res, next) => {
     err = new ErrorHandler(message, 400);
   }
 
-  if (err.name === "jsonWebTokenError") {
+  if (err.name === "JsonWebTokenError") {
     const message = "Json Web Token is invalid. try again";
     err = new ErrorHandler(message, 400);
   }
 
-  if (err.name === "TokenExpireError") {
+  if (err.name === "TokenExpiredError") {
     const message = "Json Web Token has expired, try again";
     err = new ErrorHandler(message, 400);
   }
@@ -32,7 +32,7 @@ export const errorMiddleware = (err, req, res, next) => {
         .join(" ")
     : err.message;
 
-  return res.status(err.statuscode).join({
+  return res.status(err.statusCode).json({
     success: false,
     message: errorMessage,
   });
