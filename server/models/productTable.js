@@ -1,4 +1,4 @@
-import database from "../databse/db.js";
+import database from "../database/db.js";
 
 export async function createProductTable() {
   try {
