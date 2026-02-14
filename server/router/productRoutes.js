@@ -8,6 +8,7 @@ import {
   deleteProduct,
   fetchAllProducts,
   fetchSingleProduct,
+  postProductReview,
   updateProduct,
 } from "../controllers/productController.js";
 
@@ -35,5 +36,6 @@ router.delete(
 );
 
 router.get("/singleProduct/:productId", fetchSingleProduct);
+router.put("/post-new/review/:productId", isAuthenticated, postProductReview);
 
 export default router;
