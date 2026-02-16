@@ -55,8 +55,8 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   const today = new Date();
   const todayDate = today.toISOString().split("T")[0];
   const yesterday = new Date(today);
-  yesterday.setData(today.getData() - 1);
-  const yesterdayDate = yesterday.toString().split("T")[0];
+  yesterday.setDate(today.getDate() - 1);
+  const yesterdayDate = yesterday.toISOString().split("T")[0];
 
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const currentMonthEnd = new Date(today.getFullYear(), today.getMonth() +1, 0);
@@ -118,17 +118,17 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
 
   //monthely sales or line chart
 
-  const monthelySalesQuery = await database.query(
+  const monthlySalesQuery = await database.query(
     `SELECT 
-    TO_CHAR(created_at, 'MON YYYY') AS month, 
-    DATE_TRUNC('month', created_at) as data, 
+    TO_CHAR(created_at, 'Mon YYYY') AS month, 
+    DATE_TRUNC('month', created_at) as date, 
     SUM(total_price) as totalSales 
     FROM orders 
-    GROUP BY month, 
-    date ORDERBY ASC`,
+    GROUP BY month, date 
+    ORDER BY date ASC`,
   );
 
-  const monthelySales = monthelySalesQuery.rows.map((row) => ({
+  const monthlySales = monthlySalesQuery.rows.map((row) => ({
     month: row.month,
     totalSales: parseFloat(row.totalSales) || 0,
   }));
@@ -141,7 +141,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     p.category,
     p.ratings,
     SUM(oi.quantity) AS total_sold
-    FROM order_item oi
+    FROM order_items oi
     JOIN products p ON p.id = oi.product_id
     GROUP BY p.name, p.images, p.category, p.ratings
     ORDER BY total_sold DESC
@@ -153,9 +153,9 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
 
   const currentMonthSalesQuery = await database.query(
     `
-      SELECT SUM(total_peice) AS total
+      SELECT SUM(total_price) AS total
       FROM orders
-      WHERE create_at BETWEEN $1 AND $2`,
+      WHERE created_at BETWEEN $1 AND $2`,
     [currentMonthStart, currentMonthEnd],
   );
 
@@ -190,7 +190,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
 
   //new user this month
   const newUsersThisMonthQuery = await database.query(
-    `SELECT COUNT(*) FROM users WHERE created_at >= $1`,
+    `SELECT COUNT(*) FROM users WHERE created_at >= $1 AND role = 'User'`,
     [currentMonthStart],
   );
 
@@ -205,7 +205,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     yesterdayRevenue,
     totalUsersCount,
     orderStatusCounts,
-    monthelySales,
+    monthlySales,
     currentMonthSales,
     topSellingProducts,
     lowStockProducts,
