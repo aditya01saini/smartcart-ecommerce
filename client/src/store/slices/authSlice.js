@@ -170,7 +170,7 @@ const authSlice = createSlice({
       })
 
       .addCase(logout.fulfilled, (state, action) => {
-        state.authUser = {};
+        state.authUser = null;
       })
       .addCase(logout.rejected, (state, action) => {
         state.authUser = state.authUser;
