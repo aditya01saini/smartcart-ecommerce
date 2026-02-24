@@ -51,7 +51,7 @@ const ProfilePanel = () => {
     formData.append("newPassword", newPassword);
     formData.append("confirmNewPassword", confirmNewPassword);
 
-    dispatch(updatePassword());
+    dispatch(updatePassword(formData));
   };
 
   if (!isAuthPopupOpen || !authUser) return null;
@@ -61,7 +61,7 @@ const ProfilePanel = () => {
       {/* overlay */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-        onClick={() => dispatch(toggleCart())}
+        onClick={() => dispatch(toggleAuthPopup())}
       />
 
       {/* profile Pannel */}
@@ -113,12 +113,12 @@ const ProfilePanel = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-2 border border-border bg-secondary text-foreground"
               />
-              <label className="flex item-center gpa-2 cusor-pointer text-sm text-muted-foreground">
+              <label className="flex item-center gpa-2 cursor-pointer text-sm text-muted-foreground">
                 <Upload className="w-4 h-4 text-primary" />
                 <span>Upload Avatar</span>
                 <input
                   type="file"
-                  accept="image/**"
+                  accept="image/*"
                   onChange={(e) => setAvatar(e.target.files[0])}
                   className="hidden"
                 />
@@ -165,7 +165,7 @@ const ProfilePanel = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Confirm Password"
-              value={newPassword}
+              value={confirmNewPassword}
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               className="w-full p-2 border border-border bg-secondary text-foreground"
             />
