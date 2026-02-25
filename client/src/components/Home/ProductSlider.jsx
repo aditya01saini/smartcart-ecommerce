@@ -20,7 +20,7 @@ const ProductSlider = ({ title, products }) => {
   const handleAddToCart = (product, e) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(addToCart(product));
+    dispatch(addToCart({product, quantity:1}));
   };
 
   return (
@@ -37,7 +37,7 @@ const ProductSlider = ({ title, products }) => {
             </button>
             <button
               onClick={() => scroll("right")}
-              className="p-2 glass -card hover:glow-on-hover animate-smooth"
+              className="p-2 glass-card hover:glow-on-hover animate-smooth"
             >
               <ChevronRight className="w-6 h-6 text-primary" />
             </button>
@@ -60,13 +60,13 @@ const ProductSlider = ({ title, products }) => {
                   <img
                     src={product.images[0].url}
                     alt={product.name}
-                    className="w-full h-48 object-contain group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                   />
 
                   {/* badges */}
 
                   <div className="absolute top-3 left-3 flex flex-col space-y-2">
-                    {new Date() - new Date(product.createdAt) <
+                    {new Date() - new Date(product.created_at) <
                       30 * 24 * 60 * 60 * 1000 && (
                       <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded">
                         NEW
@@ -98,7 +98,41 @@ const ProductSlider = ({ title, products }) => {
                     {product.name}
                   </h3>
                   {/* product rating */}
-                  <div></div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="flex items-center">
+
+                      {[...Array(5)].map((_, i) => {
+                        return (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i < Math.floor(product.ratings) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
+                        />
+                        );
+          })}
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      ({product.review_count})
+                    </span>
+                  </div>
+
+                  {/* product price */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl font-bold text-primary">
+                      ${product.price}
+                    </span>
+                  </div>
+                  {/* product availability */}
+                  <div>
+                    <span
+                      className={`text-xs px-2 py-1 rounded ${product.stock > 5 ? "bg-green-500/20 text-green-400" : product.stock > 0 ? "bg-yellow-500/20 text-yellow-400" : "bg-red-500/20 text-red-400"}`}
+                    >
+                      {product.stock > 5
+                        ? "In Stock"
+                        : product.stock > 0
+                          ? "Limited Stock"
+                          : "Out of Stock"}
+                    </span>
+                  </div>
                 </div>
               </Link>
             );
