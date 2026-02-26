@@ -28,6 +28,7 @@ import { useEffect } from "react";
 import { getUser } from "./store/slices/authSlice";
 import { Loader } from "lucide-react";
 import { fetchAllProducts } from "./store/slices/productSlice";
+import CategoryGrid from "./components/Home/CategoryGrid";
 
 const App = () => {
   const { authUser, isCheckKingAuth } = useSelector((state) => state.auth);
@@ -38,10 +39,19 @@ const App = () => {
   }, [getUser]);
 
   useEffect(() => {
-    dispatch(fetchAllProducts());
+    dispatch(
+      fetchAllProducts({
+        category: "",
+        price: `0-10000`,
+        search: "",
+        ratings: "",
+        availability: "",
+        page: 1,
+      }),
+    );
   }, []);
 
-  const {products} = useSelector(state => state.product) 
+  const { products } = useSelector((state) => state.product);
 
   if ((isCheckKingAuth && !authUser) || !products) {
     return (
