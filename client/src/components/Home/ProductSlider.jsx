@@ -20,7 +20,7 @@ const ProductSlider = ({ title, products }) => {
   const handleAddToCart = (product, e) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(addToCart({product, quantity:1}));
+    dispatch(addToCart({ product, quantity: 1 }));
   };
 
   return (
@@ -100,15 +100,14 @@ const ProductSlider = ({ title, products }) => {
                   {/* product rating */}
                   <div className="flex items-center space-x-2 mb-2">
                     <div className="flex items-center">
-
                       {[...Array(5)].map((_, i) => {
                         return (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${i < Math.floor(product.ratings) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-                        />
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < Math.floor(product.ratings) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
+                          />
                         );
-          })}
+                      })}
                     </div>
                     <span className="text-sm text-muted-foreground">
                       ({product.review_count})
