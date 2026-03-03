@@ -25,7 +25,7 @@ const popupSlice = createSlice({
       state.isCartOpen = !state.isCartOpen;
     },
 
-    toggleAIModel(state) {
+    toggleAIModal(state) {
       state.isAIPopupOpen = !state.isAIPopupOpen;
     },
   },
@@ -38,7 +38,7 @@ export const {
   toggleSearchBar,
 
   toggleCart,
-  toggleAIModel,
+  toggleAIModal,
 } = popupSlice.actions;
 
 export default popupSlice.reducer;
