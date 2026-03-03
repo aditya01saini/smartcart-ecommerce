@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { X, Search, Sparkles } from "lucide-react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { toggleAIModal } from "../../store/slices/popupSlice.js";
+import { fetchProductWithAI } from "../../store/slices/productSlice.js";
 
 const AISearchModal = () => {
   const [userPrompt, setUserPrompt] = useState("");
+  const dispatch = useDispatch();
+
   const { aiSearching } = useSelector((state) => state.product);
   const { isAIPopupOpen } = useSelector((state) => state.popup);
 
@@ -13,12 +17,13 @@ const AISearchModal = () => {
     "Find all leather jackets for men",
     "Find all red",
   ];
-  const dispatch = useDispatch();
+  
+  if (!isAIPopupOpen) return null;
   const handleSearch = (e) => {
     e.preventDefault();
     dispatch(fetchProductWithAI(userPrompt));
 
-    if (!isAIPopupOpen) return null;
+    
   };
   return (
     <div
@@ -29,6 +34,7 @@ const AISearchModal = () => {
       <div
         className="bg-background/95 backdrop-blur-md border 
       border-border rounded-2xl p-8 w-full max-w-2xl"
+     
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
