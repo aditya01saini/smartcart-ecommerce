@@ -1,24 +1,25 @@
-import { Search, Sparkles, Star, Filter } from "lucide-react";
+import { Search, Sparkles, Star, Filter, Dice1 } from "lucide-react";
 import { categories } from "../data/products";
 import ProductCard from "../components/Products/ProductCard";
 import Pagination from "../components/Products/Pagination";
-import AISearchModal from "../components/Products/AISearchModal";
+import AISearchModal from "../components/Products/AISearchModal.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchAllProducts } from "../store/slices/productSlice";
+import { toggleAIModal } from "../store/slices/popupSlice.js";
 
 const Products = () => {
-  const { Products, totalProducts } = useSelector((state) => state.product);
+  const { products, totalProducts } = useSelector((state) => state.product);
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
   };
 
   const query = useQuery();
-  const searchTeam = query.get("search");
+  const searchTerm = query.get("search");
   const searchedCategory = query.get("category");
 
-  const [searchQuery, setSearchQuery] = useState(searchTeam || "");
+  const [searchQuery, setSearchQuery] = useState(searchTerm || "");
   const [selectedCategory, setSelectedCategory] = useState(
     searchedCategory || "",
   );
@@ -51,7 +52,7 @@ const Products = () => {
     currentPage,
   ]);
 
-  const totalPage = Math.ceil(totalProducts / 10);
+  const totalPages = Math.ceil(totalProducts / 10);
   return (
     <>
       <div className="min-h-screen pt-20">
@@ -112,7 +113,7 @@ const Products = () => {
                         <button
                           key={rating}
                           onClick={() =>
-                            setSelectedCategory(
+                            setSelectedRating(
                               selectedRating === rating ? 0 : rating,
                             )
                           }
@@ -147,10 +148,10 @@ const Products = () => {
                           key={status}
                           onClick={() =>
                             setAvailability(
-                              availability === status ? "" : status,
+                              availability === status ? "" : status
                             )
                           }
-                          className={`w-full p-2 text-left rounded ${availability === status ? "bg-primary/20" : "hover:bg-secondar"}`}
+                          className={`w-full p-2 text-left rounded ${availability === status ? "bg-primary/20" : "hover:bg-secondary"}`}
                         >
                           {status === "in-stock"
                             ? "In Stock"
@@ -171,18 +172,20 @@ const Products = () => {
                   <div className="space-y-2">
                     <button
                       onClick={() => setSelectedCategory("")}
-                      className={`w-full p-2 text-left rounded ${!selectedCategory ? "bg-primary/20" : "hover:bg-secondar"}`}
+                      className={`w-full p-2 text-left rounded ${!selectedCategory ? "bg-primary/20" : "hover:bg-secondary"}`}
                     >
                       All Categories
                     </button>
-                    {categories.map((categories) => {
+                    {categories.map((category) => {
+                      return(
                       <button
                         key={category.id}
-                        onClick={setSelectedCategory(category.name)}
-                        className={`w-full p-2 text-left rounded ${selectedCategory === category.name ? "bg-primary/20" : "hover:bg-secondar"}`}
+                        onClick={() => setSelectedCategory(category.name)}
+                        className={`w-full p-2 text-left rounded ${selectedCategory === category.name ? "bg-primary/20" : "hover:bg-secondary"}`}
                       >
                         {category.name}
-                      </button>;
+                      </button>
+                      );
                     })}
                   </div>
                 </div>
@@ -192,15 +195,15 @@ const Products = () => {
             {/* main contet */}
             <div className="flex-1">
               {/* search bar */}
-              <div className="mb-8 flex max-[440px]:flex-col item-center gap-2">   
-                <div className="relative w-[-webkit-fill-available]">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted foreground" />
+              <div className="mb-8 flex max-[440px]:flex-col item-center gap-2">
+                <div className="relative w-[-webkit-fill-available]">   
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     type="text"
                     placeholder="Search Products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-secondary border border-border border-lg focus:outline-none text-foreground placeholder-muted-foreground"
+                    className="w-full pl-10 pr-4 py-3 bg-secondary border border-border rounded-lg focus:outline-none text-foreground placeholder-muted-foreground"
                   />
                 </div>
 
@@ -223,10 +226,35 @@ const Products = () => {
                   </span>
                 </button>
               </div>
-              {/*   */}
+              {/*   product grid*/}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+
+              {/* pagimation */}
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              )}
+              {/* no result */}
+              {products.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground text-lg">
+                    No products found matching your criteria.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {/* AI search */}
+        <AISearchModal />
       </div>
     </>
   );
