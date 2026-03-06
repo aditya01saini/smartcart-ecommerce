@@ -13,6 +13,7 @@ const ReviewsContainer = ({ product, productReviews }) => {
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
+    const data = new FormData();
     data.append("rating", rating);
     data.append("comment", comment);
     dispatch(postReview({ productId: product.id, review: data }));
@@ -47,7 +48,7 @@ const ReviewsContainer = ({ product, productReviews }) => {
           <button
             type="submit"
             disabled={isPostingReview}
-            className="px-6 py-2 rounded-lg bg-primary text-white font-semibold hover:glow-on-hover animate-smooth disabled:opacity-50"
+            className="px-6 py-2 rounded-lg text-primary-foreground bg-primary  font-semibold hover:glow-on-hover animate-smooth disabled:opacity-50"
           >
             {isPostingReview ? "Submitting..." : "Submit Review"}
           </button>
