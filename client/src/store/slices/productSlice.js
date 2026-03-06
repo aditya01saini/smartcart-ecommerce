@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
-import { toggleAIModel } from "./popupSlice";
+import { toggleAIModal } from "./popupSlice";
 
 export const fetchAllProducts = createAsyncThunk(
   "product/fetchAll",
@@ -37,7 +37,7 @@ export const fetchAllProducts = createAsyncThunk(
   },
 );
 
-export const fetchProductDetails = createAsyncThunk(
+export const postReview = createAsyncThunk(
   "product/post-new/review",
   async ({ productId, review }, thunkAPI) => {
     try {
@@ -56,7 +56,7 @@ export const fetchProductDetails = createAsyncThunk(
   },
 );
 
-export const postReview = createAsyncThunk(
+export const fetchProductDetails = createAsyncThunk(
   "product/singleProduct",
   async (id, thunkAPI) => {
     try {
@@ -93,8 +93,8 @@ export const fetchProductWithAI = createAsyncThunk(
   async ( userPrompt, thunkAPI) => {
     try {
       const res = await axiosInstance.post(
-        `/product/ai-search`, userPrompt);
-        thunkAPI.dispatch(toggleAIModel());
+        `/product/ai-search`, {userPrompt});
+        thunkAPI.dispatch(toggleAIModal());
       return res.data;
     } catch (error) {
       toast.error(error.response.data.message);
@@ -142,7 +142,7 @@ const productSlice = createSlice({
       .addCase(fetchProductDetails.fulfilled, (state, action) => {
         state.loading = false;
         state.productDetails = action.payload;
-        state.productDetails = action.payload.Reviews;
+        state.productReviews = action.payload.reviews;
       })
       .addCase(fetchProductDetails.rejected, (state) => {
         state.loading = false;
