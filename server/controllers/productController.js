@@ -110,7 +110,7 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
   }
 
   const whereClause = conditions.length
-    ? `WHERE ${conditions.join("AND")}`
+    ? `WHERE ${conditions.join(" AND ")}`
     : "";
 
   // Get count of filtered products
@@ -492,7 +492,7 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
 //         WHERE name ILIKE ANY($1)
 //         OR description ILIKE ANY($1)
 //         OR category ILIKE ANY($1)
-//         LIMIT 200;     
+//         LIMIT 200;
 //         `,
 //       [keywords]
 //     );
