@@ -31,7 +31,7 @@ const Payment = () => {
     address: "",
     city: "",
     pinCode: "",
-    country: "",
+    country: "India",
   });
 
   const total = cart.reduce(
@@ -285,9 +285,9 @@ const Payment = () => {
                     </button>
                   </form>
                 ) : (
-                  <Element stripe={stripePromise}>
+                  <Elements stripe={stripePromise}>
                     <PaymentForm />
-                  </Element>
+                  </Elements>
                 )}
               </div>
 
