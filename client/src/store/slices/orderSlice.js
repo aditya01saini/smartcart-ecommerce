@@ -63,7 +63,7 @@ const orderSlice = createSlice({
       .addCase(placeOrder.pending, (state) => {
         state.placingOrder = true;
       })
-      .addCase(placeOrder.fulfilled, (state) => {
+      .addCase(placeOrder.fulfilled, (state, action) => {
         state.placingOrder = false;
         state.finalPrice = action.payload.total_price;
         state.paymentIntent = action.payload.paymentIntent;
