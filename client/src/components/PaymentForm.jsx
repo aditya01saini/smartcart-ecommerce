@@ -25,7 +25,7 @@ const PaymentForm = () => {
 
     setIsProcessing(true);
 
-    const cardElement = element.getElement(cardElement);
+    const cardElement = element.getElement(CardElement);
     const { error, paymentIntent } = await stripe.confirmCardPayment(
       clientSecret,
       {
