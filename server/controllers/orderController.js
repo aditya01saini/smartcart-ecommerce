@@ -160,15 +160,15 @@ export const fetchSingleOrder = catchAsyncErrors(async (req, res, next) => {
 FROM orders o
 LEFT JOIN order_items oi ON o.id = oi.order_id
 LEFT JOIN shipping_info s ON o.id = s.order_id
-WHERE o.id = $1
+WHERE o.id = $1 AND o.paid_at IS NOT NULL
 GROUP BY o.id, s.id;
 `,
-    [orderId],
+    [req.user.id],
   );
 
   res.status(200).json({
     success: true,
-    message: "Order fetched",
+    message: "All your orders are fetched",
     orders: result.rows[0],
   });
 });
