@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Filter, Package, Truck, CheckCircle, XCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchMyOrders } from "../store/slices/orderSlice";
 
 const Orders = () => {
@@ -162,7 +162,7 @@ const Orders = () => {
                         <div className="text-right">
                           <p className="text-sm text-muted-foreground">Total</p>
                           <p className="text-xl font-bold text-primary">
-                            ${order.total_Price}
+                            ${order.total_price}
                           </p>
                         </div>
                       </div>
@@ -172,30 +172,32 @@ const Orders = () => {
 
                     <div className="space-y-4">
                       {order?.order_items?.map((item) => {
-                        <div
-                          key={item.product_id}
-                          className="flex items-center space-x-4 p-4 bg-secondary/50 rounded-lg"
-                        >
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-16 h-16 object-cover rounded-lg "
-                          />
+                        return (
+                          <div
+                            key={item.product_id}
+                            className="flex items-center space-x-4 p-4 bg-secondary/50 rounded-lg"
+                          >
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              className="w-16 h-16 object-cover rounded-lg "
+                            />
 
-                          <div className="flex min-w-0">
-                            <h4 className="font-medium text-foreground truncate">
-                              {item.title}
-                            </h4>
-                            <p className="text-sm text-muted-foreground">
-                              Quantity: {item.quantity}
-                            </p>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-foreground truncate">
+                                {item.title}
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                Quantity: {item.quantity}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold text-foreground">
+                                ${item.price}
+                              </p>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <p className="font-semibold text-foreground">
-                              ${item.price}
-                            </p>
-                          </div>
-                        </div>;
+                        );
                       })}
                     </div>
 
@@ -207,16 +209,16 @@ const Orders = () => {
                       <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
                         Track Order
                       </button>
-                      {order.status === "Delivered" && (
+                      {/* {order.status === "Delivered" && ( */}
                         <>
-                          <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
+                          <Link to={`/product/${order.order_items.order_item_id}`} className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
                             Write Review
-                          </button>
+                          </Link>
                           <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
                             Reorder
                           </button>
                         </>
-                      )}
+                      {/* )} */}
 
                       {/* {order.status === "Processing" && (
                         <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm text-destructive">
