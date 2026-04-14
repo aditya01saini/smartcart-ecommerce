@@ -40,13 +40,18 @@ export const fetchAllProducts = createAsyncThunk(
 export const postReview = createAsyncThunk(
   "product/post-new/review",
   async ({ productId, review }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const authUser = state.auth.authUser;
     try {
       const res = await axiosInstance.put(
         `/product/post-new/review/${productId}`,
         review,
       );
       toast.success(res.data.message);
-      return res.data.review;
+      return {
+        review: res.data.review,
+        authUser
+      }
     } catch (error) {
       toast.error(error.response.data.message || "Failed to post review.");
       return thunkAPI.rejectWithValue(
@@ -75,7 +80,7 @@ export const deleteReview = createAsyncThunk(
   async ({ productId, reviewId }, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(
-        `/product/delete/review/${productId}`
+        `/product/delete/review/${productId}`,
       );
       toast.success(res.data.message);
       return reviewId;
@@ -90,11 +95,12 @@ export const deleteReview = createAsyncThunk(
 
 export const fetchProductWithAI = createAsyncThunk(
   "product/ai-search",
-  async ( userPrompt, thunkAPI) => {
+  async (userPrompt, thunkAPI) => {
     try {
-      const res = await axiosInstance.post(
-        `/product/ai-search`, {userPrompt});
-        thunkAPI.dispatch(toggleAIModal());
+      const res = await axiosInstance.post(`/product/ai-search`, {
+        userPrompt,
+      });
+      thunkAPI.dispatch(toggleAIModal());
       return res.data;
     } catch (error) {
       toast.error(error.response.data.message);
@@ -106,7 +112,6 @@ export const fetchProductWithAI = createAsyncThunk(
 );
 
 // const {authUser} = useSelector((state) => state.auth)
-
 
 const productSlice = createSlice({
   name: "product",
@@ -155,26 +160,29 @@ const productSlice = createSlice({
       .addCase(postReview.fulfilled, (state) => {
         state.isPostingReview = false;
         // state.productReviews = [action.payload, ...state.productReviews];
-        const newReview = action.payload;
-        const existingReviewIndex = state.productReviews.findIndex(rev => rev.reviewer?.id === newReview.user_id
-        )
+        const newReview = action.payload.review;
+        const authUser = action.payload.authUser;
+        const existingReviewIndex = state.productReviews.findIndex(
+          (rev) => rev.reviewer?.id === newReview.user_id,
+        );
 
-        if(existingReviewIndex !== -1) {
+        if (existingReviewIndex !== -1) {
           state.productReviews[existingReviewIndex].rating = Number(
-            newReview.rating
-          )
+            newReview.rating,
+          );
           state.productReviews[existingReviewIndex].comment = newReview.comment;
-        }else {
+        } else {
           state.productReviews = [
             {
               ...newReview,
-              reviewer : {
+              reviewer: {
                 id: authUser?.id,
                 name: authUser?.name,
-                avatar: authUser?.avatar?.url
-              }
-            }
-          ]
+                avatar: authUser?.avatar?.url,
+              },
+            },
+            ...state.productReviews,
+          ];
         }
       })
       .addCase(postReview.rejected, (state) => {
@@ -204,7 +212,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductWithAI.rejected, (state) => {
         state.aiSearching = false;
-      })
+      });
   },
 });
 
