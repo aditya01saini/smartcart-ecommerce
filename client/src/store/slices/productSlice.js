@@ -75,7 +75,7 @@ export const deleteReview = createAsyncThunk(
   async ({ productId, reviewId }, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(
-        `/product/delete/review/${productId}`,
+        `/product/delete/review/${productId}`
       );
       toast.success(res.data.message);
       return reviewId;
@@ -104,6 +104,8 @@ export const fetchProductWithAI = createAsyncThunk(
     }
   },
 );
+
+// const {authUser} = useSelector((state) => state.auth)
 
 
 const productSlice = createSlice({
@@ -152,7 +154,28 @@ const productSlice = createSlice({
       })
       .addCase(postReview.fulfilled, (state) => {
         state.isPostingReview = false;
-        state.productReviews = [action.payload, ...state.productReviews];
+        // state.productReviews = [action.payload, ...state.productReviews];
+        const newReview = action.payload;
+        const existingReviewIndex = state.productReviews.findIndex(rev => rev.reviewer?.id === newReview.user_id
+        )
+
+        if(existingReviewIndex !== -1) {
+          state.productReviews[existingReviewIndex].rating = Number(
+            newReview.rating
+          )
+          state.productReviews[existingReviewIndex].comment = newReview.comment;
+        }else {
+          state.productReviews = [
+            {
+              ...newReview,
+              reviewer : {
+                id: authUser?.id,
+                name: authUser?.name,
+                avatar: authUser?.avatar?.url
+              }
+            }
+          ]
+        }
       })
       .addCase(postReview.rejected, (state) => {
         state.isPostingReview = false;
